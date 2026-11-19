@@ -527,8 +527,9 @@ func setRouter(r *gin.Engine) {
 	})
 	r.POST("/emby/webhook", controllers.Webhook)
 	r.POST("/api/login", controllers.LoginAction)
-	r.GET("/115/url/*filename", controllers.Get115UrlByPickCode)           // 查询115直链 by pickcode 支持iso，路径最后一部分是.扩展名格式
-	r.GET("/115/newurl", controllers.Get115UrlByPickCode)                  // 查询115直链 by pickcode
+	r.GET("/115/url/*filename", controllers.Get115UrlByPickCode) // 查询115直链 by pickcode 支持iso，路径最后一部分是.扩展名格式
+	r.GET("/115/newurl", controllers.Get115UrlByPickCode)        // 查询115直链 by pickcode
+	r.POST("/internal/peach/115/resolve", controllers.PeachResolve115)
 	r.GET("/baidupan/url/*filename", controllers.GetBaiduPanUrlByPickCode) // 查询百度网盘直链 by fsid 支持iso，路径最后一部分是.扩展名格式
 
 	r.GET("/openlist/url", controllers.GetOpenListFileUrl) // 查询OpenList直链

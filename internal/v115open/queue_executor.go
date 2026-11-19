@@ -350,8 +350,7 @@ func (qe *QueueExecutor) executeRequest(req *QueuedRequest) (*resty.Response, *R
 		}
 	}
 
-	helpers.V115Log.Infof("队列执行 %s %s\nstate=%v, code=%d, msg=%s, data=%s\n",
-		req.Request.Method, req.URL, resp.State, resp.Code, resp.Message, string(resp.Data))
+	helpers.V115Log.Infof("115 请求完成: method=%s state=%v code=%d", req.Request.Method, resp.State, resp.Code)
 
 	// 检查错误码
 	switch resp.Code {
@@ -368,7 +367,7 @@ func (qe *QueueExecutor) executeRequest(req *QueuedRequest) (*resty.Response, *R
 
 	if resp.Code != 0 {
 		// helpers.V115Log.Errorf("错误码：%d，错误信息：%s", resp.Code, string(resBytes))
-		return response, resp, resBytes, fmt.Errorf("错误码：%d，错误信息：%s", resp.Code, resp.Message)
+		return response, resp, resBytes, fmt.Errorf("115 错误码：%d", resp.Code)
 	}
 
 	return response, resp, resBytes, nil

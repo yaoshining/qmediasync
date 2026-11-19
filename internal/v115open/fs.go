@@ -158,7 +158,7 @@ func (c *OpenClient) GetFsDetailByPath(ctx context.Context, path string) (*FileD
 	}
 	data := make(map[string]string)
 	data["path"] = path
-	helpers.V115Log.Infof("调用文件详情接口, path: %s", path)
+	helpers.V115Log.Info("调用文件详情接口")
 	url := fmt.Sprintf("%s/open/folder/get_info", OPEN_BASE_URL)
 	req := c.client.R().SetFormData(data).SetMethod("POST")
 	var respData *FileDetail = &FileDetail{}
@@ -208,7 +208,7 @@ func (c *OpenClient) GetFsDetailByCid(ctx context.Context, fileId string) (*File
 	// helpers.V115Log.Debugf("调用文件详情接口, fileId: %s => %s", fileId, string(bodyBytes))
 	bodyErr := json.Unmarshal(bodyBytes, &resp)
 	if bodyErr != nil {
-		helpers.V115Log.Errorf("解析文件详情接口响应失败: %s => %v", string(bodyBytes), bodyErr)
+		helpers.V115Log.Errorf("解析文件详情接口响应失败: %v", bodyErr)
 		return respData, bodyErr
 	}
 	if resp.Code != 0 {

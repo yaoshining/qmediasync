@@ -132,7 +132,7 @@ func Proxy115(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, APIResponse[any]{Code: BadRequest, Message: "缺少url参数", Data: nil})
 		return
 	}
-	helpers.AppLogger.Infof("反代网盘下载链接: %s", target)
+	helpers.AppLogger.Info("反代网盘下载链接")
 	// // 只允许反代 cdnfhnfile.115cdn.net 域名
 	// if !strings.HasPrefix(target, "https://cdnfhnfile.115cdn.net/") {
 	// 	c.JSON(http.StatusForbidden, APIResponse[any]{Code: BadRequest, Message: "只允许反代115CDN链接", Data: nil})

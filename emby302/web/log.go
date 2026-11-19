@@ -28,7 +28,7 @@ func CustomLogger(port string) gin.HandlerFunc {
 			colors.ToBlue(port),
 			colors.ToBlue(c.GetString(MatchRouteKey)),
 			colors.ToBlue(c.Request.Method),
-			c.Request.RequestURI,
+			c.Request.URL.Path,
 		)
 	}
 }
