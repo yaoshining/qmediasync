@@ -3,6 +3,7 @@ package v115open
 import (
 	"Q115-STRM/internal/helpers"
 
+	"errors"
 	"fmt"
 	"time"
 )
@@ -37,6 +38,9 @@ type TokenData struct {
 	RefreshToken string `json:"refresh_token"`
 	ExpiresIn    int64  `json:"expires_in"`
 }
+
+// ErrRefreshTokenInvalid 表示 115 明确拒绝了刷新凭证。
+var ErrRefreshTokenInvalid = errors.New("115刷新凭证无效，请重新授权")
 
 // 获取开放平台登录二维码
 // POST https://passportapi.115.com/open/authDeviceCode
@@ -148,24 +152,19 @@ func (c *OpenClient) RefreshToken(refreshToken string) (*TokenData, error) {
 		Timeout:    300 * time.Second,
 	}
 	_, respData, err := c.doRequest("https://passportapi.115.com/open/refreshToken", req, refreshConfig)
-	if err != nil {
+	if respData != nil && respData.Code == REFRESH_TOKEN_INVALID {
 		c.SetAuthToken("", "")
-		helpers.AppLogger.Errorf("115开放平台刷新访问凭证失败: %v", err)
-		// 清空token,让用户重新授权
 		helpers.PublishSync(helpers.V115TokenInValidEvent, map[string]any{
 			"account_id": c.AccountId,
-			"reason":     err.Error(),
+			"reason":     ErrRefreshTokenInvalid.Error(),
 		})
+		return nil, ErrRefreshTokenInvalid
+	}
+	if err != nil {
+		helpers.AppLogger.Errorf("115开放平台刷新访问凭证失败: %v", err)
 		return nil, err
 	}
-	if respData.State != 1 {
-		c.SetAuthToken("", "")
-		helpers.AppLogger.Errorf("115开放平台刷新访问凭证失败: %+v", respData)
-		// 清空token,让用户重新授权
-		helpers.PublishSync(helpers.V115TokenInValidEvent, map[string]any{
-			"account_id": c.AccountId,
-			"reason":     respData.Message,
-		})
+	if respData == nil || respData.State != 1 {
 		return nil, fmt.Errorf("115开放平台刷新访问凭证失败")
 	}
 	tokenDataOrArray := StructOrArray[TokenData]{}

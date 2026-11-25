@@ -10,6 +10,7 @@ import (
 	"Q115-STRM/internal/scrape"
 	"Q115-STRM/internal/v115open"
 	"context"
+	"errors"
 	"fmt"
 	"sync/atomic"
 	"time"
@@ -124,8 +125,9 @@ func RefreshOAuthAccessToken() {
 			tokenData, err := client.RefreshToken(account.RefreshToken)
 			if err != nil {
 				helpers.AppLogger.Errorf("刷新115访问凭证失败: %s", err.Error())
-				// 清空token
-				account.ClearToken(err.Error())
+				if !errors.Is(err, v115open.ErrRefreshTokenInvalid) {
+					continue
+				}
 				ctx := context.Background()
 				notif := &models.Notification{
 					Type:      models.SystemAlert,
